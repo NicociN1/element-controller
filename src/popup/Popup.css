@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+  width: 300px;
+  height: 380px;
+  overflow: hidden scroll;
+}
+
+body {
+  margin: 0;
+}
