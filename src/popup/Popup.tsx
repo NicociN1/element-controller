@@ -10,15 +10,17 @@ import { EnterOutlined } from "@ant-design/icons";
 import { elementTypeToDisplayName } from "../utils/elements";
 import paramData from "../paramData/paramData";
 import ParamUI from "./components/ParamUI";
+import { ParamUIData } from "../types/paramUIData";
 
 const PopupWrapper = styled.div`
   margin: 8px;
 `
-const ListMenuContainer = styled.div`
+const TopMenuContainer = styled.div`
   display: flex;
   flex-flow: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
 `;
 const ElementsContainer = styled.div`
   display: flex;
@@ -46,8 +48,16 @@ const ControlMenuTitle = styled.div`
 const ElementCountContainer = styled.div`
   font: bold;
   font-size: 18px;
+  margin-top: 8px;
 `;
 
+const ListMenuContainer = styled.div`
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+`
 const ParamsContainer = styled.div`
   width: 90%;
   margin: auto;
@@ -69,22 +79,36 @@ function Popup() {
   );
   const [searchWords, setSearchWords] = useState<string>(localStorage.getItem("elemcontroller-searchwords") ?? "");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [paramComp, setParamComp] = useState<ParamUIData | null>(null)
   const elementsRef = useRef<ElementType[]>([]);
 
   useEffect(() => {
-    elementsUpdate();
+    updateElements();
   }, []);
-  const elementsUpdate = async () => {
-    sendMessage(
-      (await getCurrentTab()).id!,
-      { action: "elements.get.all" } as MessageType,
-      (res: MessageType) => {
-        if (res.action !== "elements.send.all") return;
-        setViewElements(res.elements);
-        elementsRef.current = res.elements;
-        applySearch()
-      },
-    );
+  const updateElements = async () => {
+    if (pageState !== "controlMenu") {
+      sendMessage(
+        (await getCurrentTab()).id!,
+        { action: "elements.get.all" } as MessageType,
+        (res: MessageType) => {
+          if (res.action !== "elements.send.all") return;
+          setViewElements(res.elements);
+          elementsRef.current = res.elements;
+          applySearch()
+        },
+      );
+    } else {
+      if (!currentElement) return
+      sendMessage(
+        (await getCurrentTab()).id!,
+        { action: "element.get.update", elementIndex: currentElement.index },
+        (res: MessageType) => {
+          if (res.action !== "element.send.update") return
+          if (!res.element) return
+          setCurrentElement(res.element)
+        }
+      )
+    }
   };
   const listItemClickHandle = (elementType: ElementType) => {
     setCurrentElement(elementType);
@@ -102,21 +126,38 @@ function Popup() {
     localStorage.setItem("elemcontroller-searchwords", searchWords)
   }
 
-  const paramComp = currentElement ? paramData(currentElement) : null;
+  const pickElement = async () => {
+    sendMessage((await getCurrentTab()).id!, {
+      action: "element.get.pick"
+    }, (res) => {
+      if (res.action !== "element.send.pick") return
+      setPageState("controlMenu")
+      setCurrentElement({ ...elementsRef.current[res.elementIndex] })
+    })
+  }
+  useEffect(() => {
+    setParamComp(currentElement ? paramData(currentElement) : null)
+  }, [currentElement])
 
   return <PopupWrapper>
+    <TopMenuContainer>
+      <ElementCountContainer>
+        {elementsRef.current.length} element(s) found!
+      </ElementCountContainer>
+      <div>
+        <Button onClick={() => updateElements()}>Update</Button>
+        <Button onClick={pickElement}>Pick</Button>
+      </div>
+      <Input
+        allowClear
+        defaultValue={searchWords}
+        onChange={(e) => {
+          setSearchWords(e.target.value)
+        }}
+      />
+    </TopMenuContainer>
     {pageState === "listMenu" ? (
       <ListMenuContainer>
-        <ElementCountContainer>
-          {elementsRef.current.length} element(s) found!
-        </ElementCountContainer>
-        <Button onClick={elementsUpdate}>Update</Button>
-        <Input
-          defaultValue={searchWords}
-          onChange={(e) => {
-            setSearchWords(e.target.value)
-          }}
-        />
         <ElementsContainer>
           {viewElements
             .filter((_e, i) => currentIndex === Math.floor(i / 6))
@@ -144,7 +185,7 @@ function Popup() {
           <Button
             icon={<EnterOutlined />}
             onClick={() => {
-              elementsUpdate();
+              updateElements();
               setPageState("listMenu")
             }}
           />

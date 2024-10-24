@@ -7,8 +7,11 @@ const manifest = defineManifest({
   name: "Element-Controller",
   description: "Web Site HTML Element Controlling",
   version: "1.0.0",
-  action: {
-    default_popup: "index.html",
+  permissions: [
+    "sidePanel"
+  ],
+  "side_panel": {
+    "default_path": "index.html"
   },
   content_scripts: [
     {
@@ -16,6 +19,11 @@ const manifest = defineManifest({
       matches: ["<all_urls>"],
     },
   ],
+  background: {
+    service_worker: "src/background.ts",
+    type: "module"
+  },
+  action: {}
 });
 
 // https://vitejs.dev/config/

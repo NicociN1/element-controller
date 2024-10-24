@@ -9,7 +9,7 @@ import MessageType from "../../types/messageType";
 
 const ListItemWrapper = styled.div`
   width: 90%;
-  height: 32px;
+  height: 48px;
   border: solid 1px gray;
   border-radius: 4px;
   padding: 8px;

@@ -3,6 +3,7 @@ import { ParamUIData } from "../../types/paramUIData";
 import styled from "@emotion/styled";
 import { sendElementControl } from "../../utils/popups";
 import ParamType from "../../types/paramType";
+import { useEffect, useState } from "react";
 
 interface ParamUIProps {
   data: ParamUIData;
@@ -34,21 +35,46 @@ const LabelContainer = styled.span`
 `
 
 const ParamUI = (props: ParamUIProps) => {
+  const [inputValues, setInputValues] = useState<(string | number | boolean | null)[]>(props.data.map(x => {
+    if (x.type === "str" || x.type === "num" || x.type === "bool") {
+      return x.defaultValue
+    } else {
+      return null
+    }
+  }))
+
+  useEffect(() => {
+    setInputValues(props.data.map(x => {
+      if (x.type === "str" || x.type === "num" || x.type === "bool") {
+        return x.defaultValue
+      } else {
+        return null
+      }
+    }))
+  }, [props.data])
+
+  const updateInputValue = (index: number, value: string | number | boolean) => {
+    const newInputValues = [...inputValues]
+    newInputValues[index] = value
+    setInputValues(newInputValues)
+  }
+
   return (
     <>
-      {props.data.map((p) => {
+      {props.data.map((p, i) => {
         if (p.type === "str") {
           return (
             <>
               <LabelContainer>{p.label}</LabelContainer>
               <StyledInput
-                defaultValue={p.defaultValue}
+                value={inputValues[i] as string}
                 onChange={(e) => {
                   sendElementControl(props.elementIndex, {
                     name: p.paramName,
                     value: e.target.value,
                     type: p.paramTagName,
                   } as ParamType);
+                  updateInputValue(i, e.target.value)
                 }}
               />
             </>
@@ -58,7 +84,7 @@ const ParamUI = (props: ParamUIProps) => {
             <>
               <LabelContainer>{p.label}</LabelContainer>
               <StyledInputNumber
-                defaultValue={p.defaultValue}
+                value={inputValues[i] as number}
                 step={p.step}
                 onChange={(v) => {
                   if (v == null) return;
@@ -67,7 +93,7 @@ const ParamUI = (props: ParamUIProps) => {
                     value: v,
                     type: p.paramTagName,
                   } as ParamType);
-                  console.log(v)
+                  updateInputValue(i, v)
                 }}
               />
             </>
@@ -96,12 +122,13 @@ const ParamUI = (props: ParamUIProps) => {
           return (
             <>
               <LabelContainer>{p.label}</LabelContainer>
-              <StyledSwitch defaultChecked={p.defaultValue} onChange={(v: boolean) => {
+              <StyledSwitch checked={inputValues[i] as boolean} onChange={(v: boolean) => {
                 sendElementControl(props.elementIndex, {
                   name: p.paramName,
                   value: v,
                   type: p.paramTagName,
                 } as ParamType);
+                updateInputValue(i, v)
               }} />
             </>
           )

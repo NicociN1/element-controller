@@ -1,12 +1,9 @@
-import { onMessage } from "../utils/contentScripts";
+import { elementFocus, focusPanel, htmlElementToElementType, onMessage, removeFocusPanel } from "../utils/contentScripts";
 import { controlElement } from "../utils/controlElement";
-import ElementType from "../types/elementType";
 
 let currentElements: HTMLElement[] = [];
 
 // const includeElements = ["video", "img"];
-
-let focusPanel: HTMLDivElement | null = null
 
 onMessage((message, _sender, sendResponse) => {
   switch (message.action) {
@@ -20,49 +17,7 @@ onMessage((message, _sender, sendResponse) => {
       sendResponse({
         action: "elements.send.all",
         elements: allElements
-          .map((v, i) => {
-            const allElemData = {
-              index: i,
-              id: v.id,
-              className: v.className,
-              style: v.getAttribute("style")
-            } as ElementType
-            switch (v.tagName) {
-              case "VIDEO": {
-                const elem = v as HTMLVideoElement;
-                return {
-                  ...allElemData,
-                  tagName: "VIDEO",
-                  currentTime: elem.currentTime,
-                  src: elem.src,
-                  duration: elem.duration,
-                  volume: elem.volume,
-                  muted: elem.muted,
-                  playbackRate: elem.playbackRate
-                } as ElementType;
-              }
-              case "IMG": {
-                const elem = v as HTMLImageElement;
-                return {
-                  ...allElemData,
-                  tagName: "IMG",
-                  id: elem.id,
-                  className: elem.className,
-                  src: elem.src,
-                  width: elem.width,
-                  height: elem.height,
-                  naturalWidth: elem.naturalWidth,
-                  naturalHeight: elem.naturalHeight
-                } as ElementType;
-              }
-
-              default:
-                return {
-                  ...allElemData,
-                  tagName: v.tagName
-                } as ElementType;
-            }
-          }),
+          .map((v, i) => htmlElementToElementType(v, i)),
       });
       break;
     }
@@ -85,26 +40,12 @@ onMessage((message, _sender, sendResponse) => {
 
     case "element.send.focus": {
       const targetElement = currentElements[message.elementIndex];
-      if (focusPanel) {
-        focusPanel.remove()
-      }
-      focusPanel = document.createElement('div')
-      focusPanel.style.width = `${targetElement.clientWidth}px`
-      focusPanel.style.height = `${targetElement.clientHeight}px`
-      focusPanel.style.position = "fixed"
-      focusPanel.style.top = `${targetElement.getBoundingClientRect().y}px`
-      focusPanel.style.left = `${targetElement.getBoundingClientRect().x}px`
-      focusPanel.style.backgroundColor = `rgba(255, 0, 0, 0.3)`
-      focusPanel.style.zIndex = "calc(infinity)"
-      document.body.appendChild(focusPanel)
+      elementFocus(targetElement)
       break;
     }
 
     case "element.send.blur": {
-      if (focusPanel) {
-        focusPanel.remove()
-      }
-      focusPanel = null
+      removeFocusPanel()
       break;
     }
 
@@ -144,6 +85,47 @@ onMessage((message, _sender, sendResponse) => {
         }
       })()
       return true
+    }
+
+    case "element.get.pick": {
+      const handleMouseOver = (e: MouseEvent) => {
+        if (e.target) {
+          elementFocus(e.target as HTMLElement)
+          e.preventDefault()
+        } else {
+          focusPanel?.remove()
+        }
+      }
+      const handleClick = (e: MouseEvent) => {
+        if (!e.target) return
+        e.preventDefault()
+        e.stopPropagation()
+        endPicker()
+        console.log(e.target)
+        const elementIndex = currentElements.findIndex(el => el === e.target)
+        sendResponse({
+          action: "element.send.pick",
+          elementIndex: elementIndex
+        })
+      }
+      const endPicker = () => {
+        document.removeEventListener('mouseover', handleMouseOver, true)
+        document.removeEventListener('click', handleClick, true)
+        removeFocusPanel()
+      }
+      document.addEventListener('mouseover', handleMouseOver, true)
+      document.addEventListener('click', handleClick, true)
+      return true
+    }
+
+    case "element.get.update": {
+      const targetElement = currentElements[message.elementIndex]
+      console.log(targetElement)
+      sendResponse({
+        action: "element.send.update",
+        element: htmlElementToElementType(targetElement, message.elementIndex)
+      })
+      break;
     }
 
     default:
