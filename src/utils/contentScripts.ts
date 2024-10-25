@@ -17,36 +17,39 @@ export const onMessage = (
   chrome.runtime.onMessage.addListener(callback);
 };
 
-export let focusPanel: HTMLDivElement | null = null
+export let focusPanel: HTMLDivElement | null = null;
 
 export const removeFocusPanel = () => {
-  focusPanel?.remove()
-  focusPanel = null
-}
+  focusPanel?.remove();
+  focusPanel = null;
+};
 
 export const elementFocus = (element: HTMLElement) => {
   if (focusPanel) {
-    focusPanel.remove()
+    focusPanel.remove();
   }
-  focusPanel = document.createElement('div')
-  focusPanel.style.width = `${element.clientWidth}px`
-  focusPanel.style.height = `${element.clientHeight}px`
-  focusPanel.style.position = "absolute"
-  focusPanel.style.top = `${element.getBoundingClientRect().top + window.scrollY}px`
-  focusPanel.style.left = `${element.getBoundingClientRect().left + window.scrollX}px`
-  focusPanel.style.backgroundColor = `rgba(255, 0, 0, 0.3)`
-  focusPanel.style.zIndex = "calc(infinity)"
-  focusPanel.style.pointerEvents = "none"
-  document.body.appendChild(focusPanel)
-}
+  focusPanel = document.createElement("div");
+  focusPanel.style.width = `${element.clientWidth}px`;
+  focusPanel.style.height = `${element.clientHeight}px`;
+  focusPanel.style.position = "absolute";
+  focusPanel.style.top = `${element.getBoundingClientRect().top + window.scrollY}px`;
+  focusPanel.style.left = `${element.getBoundingClientRect().left + window.scrollX}px`;
+  focusPanel.style.backgroundColor = `rgba(255, 0, 0, 0.3)`;
+  focusPanel.style.zIndex = "calc(infinity)";
+  focusPanel.style.pointerEvents = "none";
+  document.body.appendChild(focusPanel);
+};
 
-export const htmlElementToElementType = (element: HTMLElement, index: number) => {
+export const htmlElementToElementType = (
+  element: HTMLElement,
+  index: number,
+) => {
   const allElemData = {
     index: index,
     id: element.id,
     className: element.className,
-    style: element.getAttribute("style")
-  } as ElementType
+    style: element.getAttribute("style"),
+  } as ElementType;
   switch (element.tagName) {
     case "VIDEO": {
       const elem = element as HTMLVideoElement;
@@ -58,7 +61,7 @@ export const htmlElementToElementType = (element: HTMLElement, index: number) =>
         duration: elem.duration,
         volume: elem.volume,
         muted: elem.muted,
-        playbackRate: elem.playbackRate
+        playbackRate: elem.playbackRate,
       } as ElementType;
     }
     case "IMG": {
@@ -72,14 +75,47 @@ export const htmlElementToElementType = (element: HTMLElement, index: number) =>
         width: elem.width,
         height: elem.height,
         naturalWidth: elem.naturalWidth,
-        naturalHeight: elem.naturalHeight
+        naturalHeight: elem.naturalHeight,
       } as ElementType;
     }
 
     default:
       return {
         ...allElemData,
-        tagName: element.tagName
+        tagName: element.tagName,
       } as ElementType;
   }
-}
+};
+
+let handleClick: (e: MouseEvent) => void;
+let handleMouseOver: (e: MouseEvent) => void;
+
+export const startPickElement = (
+  targetElements: HTMLElement[],
+  handlePick: (elementIndex: number) => void,
+) => {
+  handleMouseOver = (e: MouseEvent) => {
+    if (e.target) {
+      elementFocus(e.target as HTMLElement);
+    } else {
+      focusPanel?.remove();
+    }
+  };
+  handleClick = (e: MouseEvent) => {
+    if (!e.target) return;
+    e.preventDefault();
+    e.stopPropagation();
+    stopPickElement();
+    console.log(e.target);
+    const elementIndex = targetElements.findIndex((el) => el === e.target);
+    handlePick(elementIndex);
+  };
+  document.addEventListener("mouseover", handleMouseOver, true);
+  document.addEventListener("click", handleClick, true);
+};
+
+export const stopPickElement = () => {
+  document.removeEventListener("mouseover", handleMouseOver, true);
+  document.removeEventListener("click", handleClick, true);
+  removeFocusPanel();
+};

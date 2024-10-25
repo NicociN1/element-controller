@@ -17,14 +17,14 @@ const FullWidthButton = styled(Button)`
 `;
 const StyledInput = styled(Input)`
   margin: auto;
-`
+`;
 const StyledInputNumber = styled(InputNumber)`
   margin: auto;
-`
+`;
 const StyledSwitch = styled(Switch)`
   width: 48px;
   margin: auto;
-`
+`;
 const LabelContainer = styled.span`
   width: 100%;
   height: 100%;
@@ -32,32 +32,41 @@ const LabelContainer = styled.span`
   &:hover {
     text-decoration: underline;
   }
-`
+`;
 
 const ParamUI = (props: ParamUIProps) => {
-  const [inputValues, setInputValues] = useState<(string | number | boolean | null)[]>(props.data.map(x => {
-    if (x.type === "str" || x.type === "num" || x.type === "bool") {
-      return x.defaultValue
-    } else {
-      return null
-    }
-  }))
+  const [inputValues, setInputValues] = useState<
+    (string | number | boolean | null)[]
+  >(
+    props.data.map((x) => {
+      if (x.type === "str" || x.type === "num" || x.type === "bool") {
+        return x.defaultValue;
+      } else {
+        return null;
+      }
+    }),
+  );
 
   useEffect(() => {
-    setInputValues(props.data.map(x => {
-      if (x.type === "str" || x.type === "num" || x.type === "bool") {
-        return x.defaultValue
-      } else {
-        return null
-      }
-    }))
-  }, [props.data])
+    setInputValues(
+      props.data.map((x) => {
+        if (x.type === "str" || x.type === "num" || x.type === "bool") {
+          return x.defaultValue;
+        } else {
+          return null;
+        }
+      }),
+    );
+  }, [props.data]);
 
-  const updateInputValue = (index: number, value: string | number | boolean) => {
-    const newInputValues = [...inputValues]
-    newInputValues[index] = value
-    setInputValues(newInputValues)
-  }
+  const updateInputValue = (
+    index: number,
+    value: string | number | boolean,
+  ) => {
+    const newInputValues = [...inputValues];
+    newInputValues[index] = value;
+    setInputValues(newInputValues);
+  };
 
   return (
     <>
@@ -74,7 +83,7 @@ const ParamUI = (props: ParamUIProps) => {
                     value: e.target.value,
                     type: p.paramTagName,
                   } as ParamType);
-                  updateInputValue(i, e.target.value)
+                  updateInputValue(i, e.target.value);
                 }}
               />
             </>
@@ -93,7 +102,7 @@ const ParamUI = (props: ParamUIProps) => {
                     value: v,
                     type: p.paramTagName,
                   } as ParamType);
-                  updateInputValue(i, v)
+                  updateInputValue(i, v);
                 }}
               />
             </>
@@ -111,8 +120,7 @@ const ParamUI = (props: ParamUIProps) => {
               {p.label}
             </FullWidthButton>
           );
-        }
-        else if (p.type === "display") {
+        } else if (p.type === "display") {
           return (
             <FullWidthButton disabled>
               {p.label}: {p.value}
@@ -122,16 +130,19 @@ const ParamUI = (props: ParamUIProps) => {
           return (
             <>
               <LabelContainer>{p.label}</LabelContainer>
-              <StyledSwitch checked={inputValues[i] as boolean} onChange={(v: boolean) => {
-                sendElementControl(props.elementIndex, {
-                  name: p.paramName,
-                  value: v,
-                  type: p.paramTagName,
-                } as ParamType);
-                updateInputValue(i, v)
-              }} />
+              <StyledSwitch
+                checked={inputValues[i] as boolean}
+                onChange={(v: boolean) => {
+                  sendElementControl(props.elementIndex, {
+                    name: p.paramName,
+                    value: v,
+                    type: p.paramTagName,
+                  } as ParamType);
+                  updateInputValue(i, v);
+                }}
+              />
             </>
-          )
+          );
         }
       })}
     </>

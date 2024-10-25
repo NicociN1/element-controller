@@ -3,7 +3,7 @@ import ParamType from "../types/paramType";
 
 export async function getCurrentTab() {
   const [tab] = await chrome.tabs.query({
-    active: true
+    active: true,
   });
   return tab;
 }
@@ -13,7 +13,7 @@ export const sendMessage = (
   message: MessageType,
   responseCallback?: (response: MessageType) => void,
 ) => {
-  chrome.tabs.sendMessage(tabId, message, responseCallback ?? (() => { }));
+  chrome.tabs.sendMessage(tabId, message, responseCallback ?? (() => {}));
 };
 
 export const sendElementControl = async (

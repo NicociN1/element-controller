@@ -4,16 +4,16 @@ import imgParamData from "./imgParamData";
 import videoParamData from "./videoParamData";
 
 const paramData = (elementType: ElementType) => {
-    switch (elementType.tagName) {
-        case "VIDEO":
-            return [...allParamData(elementType), ...videoParamData(elementType)];
+  switch (elementType.tagName) {
+    case "VIDEO":
+      return [...allParamData(elementType), ...videoParamData(elementType)];
 
-        case "IMG":
-            return [...allParamData(elementType), ...imgParamData(elementType)]
+    case "IMG":
+      return [...allParamData(elementType), ...imgParamData(elementType)];
 
-        default:
-            return allParamData(elementType)
-    }
+    default:
+      return allParamData(elementType);
+  }
 };
 
 export default paramData;

@@ -11,9 +11,9 @@ export interface ElementVideo extends BaseElement {
   currentTime: number;
   src: string;
   duration: number;
-  volume: number
-  muted: boolean
-  playbackRate: number
+  volume: number;
+  muted: boolean;
+  playbackRate: number;
 }
 export interface ElementImg extends BaseElement {
   tagName: "IMG";

@@ -8,7 +8,7 @@ const videoParamData = (elementType: ElementVideo) =>
       label: "Source URL",
       defaultValue: elementType.src,
       paramTagName: "video",
-      paramName: "src"
+      paramName: "src",
     },
     {
       type: "num",
@@ -16,7 +16,7 @@ const videoParamData = (elementType: ElementVideo) =>
       defaultValue: Math.floor(elementType.currentTime * 10) / 10,
       paramTagName: "video",
       paramName: "currentTime",
-      step: 1
+      step: 1,
     },
     {
       type: "num",
@@ -24,14 +24,14 @@ const videoParamData = (elementType: ElementVideo) =>
       defaultValue: Math.floor(elementType.volume * 10) / 10,
       paramName: "volume",
       paramTagName: "video",
-      step: 0.1
+      step: 0.1,
     },
     {
       type: "bool",
       label: "Muted",
       defaultValue: elementType.muted,
       paramName: "muted",
-      paramTagName: "video"
+      paramTagName: "video",
     },
     {
       type: "num",
@@ -39,7 +39,7 @@ const videoParamData = (elementType: ElementVideo) =>
       defaultValue: elementType.playbackRate,
       paramName: "playbackRate",
       paramTagName: "video",
-      step: 0.1
+      step: 0.1,
     },
     {
       type: "func",
@@ -57,8 +57,8 @@ const videoParamData = (elementType: ElementVideo) =>
       type: "func",
       label: "Request PiP",
       paramName: "requestPictureInPicture",
-      paramTagName: "video"
-    }
+      paramTagName: "video",
+    },
   ] as ParamUIData;
 
 export default videoParamData;

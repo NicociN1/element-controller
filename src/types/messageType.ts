@@ -12,12 +12,12 @@ interface MsgActionSendAllElements extends MsgBase {
   elements: ElementType[];
 }
 interface MsgActionGetUpdateElement extends MsgBase {
-  action: "element.get.update"
-  elementIndex: number
+  action: "element.get.update";
+  elementIndex: number;
 }
 interface MsgActionSendUpdateElement extends MsgBase {
-  action: "element.send.update"
-  element?: ElementType
+  action: "element.send.update";
+  element?: ElementType;
 }
 interface MsgActionControlElement extends MsgBase {
   action: "element.send.control";
@@ -25,30 +25,33 @@ interface MsgActionControlElement extends MsgBase {
   param: ParamType;
 }
 interface MsgActionScrollElement extends MsgBase {
-  action: "element.send.scroll"
-  elementIndex: number
+  action: "element.send.scroll";
+  elementIndex: number;
 }
 interface MsgActionFocusElement extends MsgBase {
-  action: "element.send.focus"
-  elementIndex: number
+  action: "element.send.focus";
+  elementIndex: number;
 }
 interface MsgActionBlurElement extends MsgBase {
-  action: "element.send.blur"
+  action: "element.send.blur";
 }
 interface MsgActionGetElementPeview extends MsgBase {
-  action: "element.get.preview"
-  elementIndex: number
+  action: "element.get.preview";
+  elementIndex: number;
 }
 interface MsgActionSendElementPeview extends MsgBase {
-  action: "element.send.preview"
-  srcUrl: string | null
+  action: "element.send.preview";
+  srcUrl: string | boolean | null;
 }
-interface MsgActionGetElementPick extends MsgBase {
-  action: "element.get.pick"
+interface MsgActionGetPickElement extends MsgBase {
+  action: "element.get.pick";
 }
-interface MsgActionSendElementPick extends MsgBase {
-  action: "element.send.pick"
-  elementIndex: number
+interface MsgActionSendPickElement extends MsgBase {
+  action: "element.send.pick";
+  elementIndex: number;
+}
+interface MsgActionCancelPickElement extends MsgBase {
+  action: "element.send.cancelpick";
 }
 
 type MessageType =
@@ -62,6 +65,7 @@ type MessageType =
   | MsgActionBlurElement
   | MsgActionGetElementPeview
   | MsgActionSendElementPeview
-  | MsgActionGetElementPick
-  | MsgActionSendElementPick
+  | MsgActionGetPickElement
+  | MsgActionSendPickElement
+  | MsgActionCancelPickElement;
 export default MessageType;

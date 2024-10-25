@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build:sidepanel": "npm run format && tsc -b && vite build --mode sidepanel",
+    "build:popup": "npm run format && tsc -b && vite build --mode popup",
+    "build:devtools": "npm run format && tsc -b && vite build --mode devtools",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "npx prettier . --write"

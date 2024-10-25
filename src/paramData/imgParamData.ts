@@ -9,7 +9,7 @@ const imgParamData = (elementType: ElementImg) =>
       paramName: "width",
       label: "Width",
       defaultValue: elementType.width,
-      step: 1
+      step: 1,
     },
     {
       type: "num",
@@ -17,25 +17,25 @@ const imgParamData = (elementType: ElementImg) =>
       paramName: "height",
       label: "Height",
       defaultValue: elementType.height,
-      step: 1
+      step: 1,
     },
     {
       type: "str",
       paramTagName: "img",
       paramName: "src",
       label: "Src URL",
-      defaultValue: elementType.src
+      defaultValue: elementType.src,
     },
     {
       type: "display",
       label: "Natural Width",
-      value: elementType.naturalWidth
+      value: elementType.naturalWidth,
     },
     {
       type: "display",
       label: "Natural Height",
-      value: elementType.naturalHeight
-    }
+      value: elementType.naturalHeight,
+    },
   ] as ParamUIData;
 
 export default imgParamData;

@@ -1,10 +1,12 @@
-export type ParamTagNames = "video" | "audio" | "a" | "img";
+export type ParamTagNames = "video" | "audio" | "a" | "img" | "div" | "span";
 export type ParamNames =
   | "id"
   | "className"
   | "click"
   | "remove"
+  | "requestFullScreen"
   | "style"
+  | "innerHTML"
   | "createPictureInPicture"
   | "currentTime"
   | "duration"
@@ -18,7 +20,7 @@ export type ParamNames =
   | "width"
   | "height"
   | "naturalWidth"
-  | "naturalHeight"
+  | "naturalHeight";
 
 interface BaseParam {
   name: ParamNames;
@@ -28,25 +30,29 @@ interface BaseParam {
 
 //all
 interface IdParam extends BaseParam {
-  name: "id"
-  value: string
+  name: "id";
+  value: string;
 }
 interface ClassNameParam extends BaseParam {
-  name: "className"
-  value: string
+  name: "className";
+  value: string;
 }
 interface RemoveParam extends BaseParam {
-  name: "remove"
+  name: "remove";
+}
+interface RequestFullScreenParam extends BaseParam {
+  name: "requestFullScreen";
+  value: string;
 }
 interface StyleParam extends BaseParam {
-  name: "style"
-  value: string
+  name: "style";
+  value: string;
 }
 interface ClickParam extends BaseParam {
-  name: "click"
+  name: "click";
 }
 interface CreatePictureInPictureParam extends BaseParam {
-  name: "createPictureInPicture"
+  name: "createPictureInPicture";
 }
 
 //media
@@ -74,23 +80,23 @@ interface PauseParam extends BaseParam {
   type: "video";
 }
 interface VolumeParam extends BaseParam {
-  name: "volume"
-  value: number
-  type: "video"
+  name: "volume";
+  value: number;
+  type: "video";
 }
 interface IsMutedParam extends BaseParam {
-  name: "muted"
-  value: boolean
-  type: "video"
+  name: "muted";
+  value: boolean;
+  type: "video";
 }
 interface PlaybackRate extends BaseParam {
-  name: "playbackRate"
-  value: number
-  type: "video"
+  name: "playbackRate";
+  value: number;
+  type: "video";
 }
 interface ReqeustPictureInPictureParam extends BaseParam {
-  name: "requestPictureInPicture"
-  type: "video"
+  name: "requestPictureInPicture";
+  type: "video";
 }
 
 //img
@@ -118,6 +124,7 @@ type ParamType =
   | ClassNameParam
   | ClickParam
   | RemoveParam
+  | RequestFullScreenParam
   | StyleParam
   | CreatePictureInPictureParam
   | CurrentTimeParam
@@ -132,5 +139,5 @@ type ParamType =
   | WidthParam
   | HeightParam
   | NaturalWidthParam
-  | NaturalHeightParam
+  | NaturalHeightParam;
 export default ParamType;
