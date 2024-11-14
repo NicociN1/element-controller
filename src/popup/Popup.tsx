@@ -154,8 +154,8 @@ function Popup() {
       elementsRef.current.filter((el) =>
         searchWords.length > 0
           ? searchWords
-              .split(" ")
-              .every((w) => elementTypeToDisplayName(el).includes(w))
+            .split(" ")
+            .every((w) => elementTypeToDisplayName(el).includes(w))
           : true,
       ),
     );
@@ -202,7 +202,7 @@ function Popup() {
           />
         </Tooltip>
         <ElementCountContainer>
-          {elementsRef.current.length} element(s) found!
+          {elementsRef.current.length} elements found!
         </ElementCountContainer>
         <Tooltip title="Update Elements and Parameters">
           <Button onClick={() => updateElements()} icon={<ReloadOutlined />} />
